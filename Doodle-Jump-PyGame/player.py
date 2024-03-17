@@ -12,6 +12,7 @@ class Player(pygame.sprite.Sprite):
         self.img_pikachu1.rect = self.img_pikachu1.image.get_rect()
         self.pos = vec(display_width / 2, display_height - 100)
         self.img_pikachu_sprite.rect.topleft =[self.pos.x,self.pos.y]
+        self.img_pikachu1.rect.topleft = [self.pos.x, self.pos.y]
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.mask_image = pygame.mask.from_surface(self.img_pikachu_sprite.image)

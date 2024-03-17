@@ -17,17 +17,19 @@ class Game:
         pygame.display.set_caption("Doodle Jump!")
         self.clock = pygame.time.Clock()
         self.img_pikachu=pygame.sprite.Sprite()
+        self.img_current=pygame.sprite.Sprite()
         self.img_pikachu.image=pygame.image.load('pikachu.png').convert_alpha()
         self.img_pikachu.rect=self.img_pikachu.image.get_rect()
         self.img_pikachu1 = pygame.sprite.Sprite()
         self.img_pikachu1.image = pygame.image.load('pikachu1.png').convert_alpha()
         self.img_pikachu1.rect = self.img_pikachu1.image.get_rect()
+        self.img_current = self.img_pikachu
         #self.img_pikachu = pygame.image.load('pikachu.png').convert_alpha()
         self.background = pygame.image.load('blue_back.jpg').convert()
         self.font = pygame.font.SysFont(None, 25)
         self.gameExit = False
         self.pos=vec(display_width-100,display_height)
-        self.img_pikachu.rect.topleft=[self.pos.x,self.pos.y]
+        self.img_current.rect.topleft=[self.pos.x,self.pos.y]
         self.vel=vec(0,0)
         self.acc=vec(0,0)
         self.all_sprites = pygame.sprite.LayeredUpdates()
@@ -36,7 +38,7 @@ class Game:
         self.playerSprite=pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.clouds = pygame.sprite.Group()
-        self.playerSprite.add(self.img_pikachu)
+        self.playerSprite.add(self.img_current)
         p1 = lowPlatform(0, display_height - 40, display_width, 40)
         #p2 = Platform(display_width/2 - 50,display_height-150)
         #p3 = Platform(display_width/2 - 100,display_height-300)
@@ -96,20 +98,20 @@ class Game:
             self.enemies_timer=now_time
             Enemies(self)
 
-        enemies_hits=pygame.sprite.spritecollide(self.img_pikachu,self.enemies,False, pygame.sprite.collide_mask)
+        enemies_hits=pygame.sprite.spritecollide(self.img_current,self.enemies,False, pygame.sprite.collide_mask)
         if enemies_hits:
             self.gameOver=True
 
         #Updating the sprite's position
-        self.img_pikachu.rect.midbottom = [self.pos.x, self.pos.y]
+        self.img_current.rect.midbottom = [self.pos.x, self.pos.y]
         #Checking for collision between the player and the sprites.
-        powerup_hits = pygame.sprite.spritecollide(self.img_pikachu, self.powerups, False)
+        powerup_hits = pygame.sprite.spritecollide(self.img_current, self.powerups, False)
         for x in powerup_hits:
             self.pow_sound.play()
             self.vel.y = power_up_boost
 
         if self.vel.y > 0:
-            hits = pygame.sprite.spritecollide(self.img_pikachu, self.platforms, False)
+            hits = pygame.sprite.spritecollide(self.img_current, self.platforms, False)
             if hits:
                 lowest = hits[0]
                 for hit in hits:
@@ -122,7 +124,7 @@ class Game:
                         self.vel.y = 0
 
         #Scrolling the screen upwards as the player moves upward. Killing the platforms which are not futher required.
-        if self.img_pikachu.rect.top <= display_height/4:
+        if self.img_current.rect.top <= display_height/4:
 
             if random.randrange(100) < 99:
                 Cloud(self)
@@ -146,7 +148,7 @@ class Game:
 
 
          #GAME OVER CHECK.
-        if self.img_pikachu.rect.bottom>display_height:
+        if self.img_current.rect.bottom>display_height:
             self.gameOver=True;
             for sprite in self.platforms:
                 sprite.rect.y-=max(self.vel.y,10)
@@ -176,7 +178,7 @@ class Game:
 
         self.playerSprite.draw(self.gameDisplay)
         # pygame.draw.rect(self.gameDisplay, red, [randObjectX, randObjectY, 100, 10])
-        #self.gameDisplay.blit(self.img_pikachu, (self.pos.x, self.pos.y))
+        #self.gameDisplay.blit(self.img_current, (self.pos.x, self.pos.y))
         #Displaying the score.
         self.messageToScreen("SCORE : "+(str)(self.score), 25, white, display_width / 2 , 15)
         pygame.display.update()
@@ -204,7 +206,7 @@ class Game:
         pygame.quit()
         quit()
 
-    def menu():
+    def menu(self):
         color = (255, 255, 255)
         # светлый цвет кнопок
         color_light = (170, 170, 170)
@@ -294,7 +296,7 @@ class Game:
                     self.acc.x = player_Acc
 
                 if event.key == pygame.K_SPACE:
-                    self.jump()
+                    self.menu()
 
 
     def messageToScreen(self,msg,size, color, x, y):
@@ -307,18 +309,30 @@ class Game:
     def jump(self):
         # Проверяем, стоит ли игрок на платформе.
         if self.vel.y > 0:
-            self.img_pikachu.rect.y += 1
-            hits = pygame.sprite.spritecollide(self.img_pikachu, self.platforms, False)
-            self.img_pikachu.rect.y -= 1
+            self.img_current.rect.y += 1
+            hits = pygame.sprite.spritecollide(self.img_current, self.platforms, False)
+            self.img_current.rect.y -= 1
             if hits:
                 # Проигрываем звук прыжка.
                 self.jump_sound.play()
+                self.vel.y = -10
 
                 # Меняем изображение игрового персонажа на img_pikachu1.
-                self.img_pikachu.image = self.img_pikachu1.image
+                self.img_current.image = pygame.image.load('pikachu1.png').convert_alpha()
+                self.img_current.rect = self.img_current.image.get_rect()
+            else:
+                self.img_current.image = pygame.image.load('pikachu.png').convert_alpha()
+                self.img_current.rect = self.img_current.image.get_rect()
+            
 
-                # Выполняем прыжок.
-                self.vel.y = -10
+
+
+
+
+
+
+
+
 
     def startScreen(self):
         self.gameDisplay.fill(orange)
