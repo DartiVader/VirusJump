@@ -222,6 +222,7 @@ class Game:
             self.clock.tick(fps)
             if self.gameOver==True:
                 self.gameOverScreen()
+            #10000 время атаки в милисекундах
             if self.isInvuln and pygame.time.get_ticks() - self.lastAttackTime > 10000:
                 self.isInvuln = False
                 # поменять анимацию с анимации атаки обратно
@@ -324,7 +325,7 @@ class Game:
 
                 if event.key == pygame.K_1:
 
-                    #двойка пока по приколу стоит, это по задумке минимальное время между атаками
+                    #2000 минимальное время между атаками в милисекундах
                     if pygame.time.get_ticks() - self.lastAttackTime > 2000 or self.lastAttackTime == 0:
                         self.isInvuln = True
                         self.lastAttackTime = pygame.time.get_ticks()
