@@ -64,6 +64,9 @@ class Game:
         self.load_data()
         #pygame.mixer.music.load(path.join(self.sound_dir,'background_music.ogg'))
         self.enemies_timer=0
+        self.isInvuln = False
+        self.lastAttackTime = 0
+
 
         for i in range(8):
             c=Cloud(self)
@@ -100,7 +103,25 @@ class Game:
 
         enemies_hits=pygame.sprite.spritecollide(self.img_current,self.enemies,False, pygame.sprite.collide_mask)
         if enemies_hits:
-            self.gameOver=True
+            if not self.isInvuln:
+                self.gameOver=True
+            else:
+                #пока меню, потом будет то что по задумке
+
+                for enemy in self.enemies:
+                    x, y = enemy.rect.center
+                    print(abs(x+y - self.pos.x - self.pos.y))
+                    if abs(x+y - self.pos.x - self.pos.y) < 80:
+                        enemy.kill()
+                        #вот тут вызов описания противника
+
+
+
+
+
+
+
+
 
         #Updating the sprite's position
         self.img_current.rect.midbottom = [self.pos.x, self.pos.y]
@@ -201,6 +222,9 @@ class Game:
             self.clock.tick(fps)
             if self.gameOver==True:
                 self.gameOverScreen()
+            if self.isInvuln and pygame.time.get_ticks() - self.lastAttackTime > 10000:
+                self.isInvuln = False
+                # поменять анимацию с анимации атаки обратно
         pygame.mixer.music.fadeout(500)
 
         pygame.quit()
@@ -297,6 +321,21 @@ class Game:
 
                 if event.key == pygame.K_SPACE:
                     self.menu()
+
+                if event.key == pygame.K_1:
+
+                    #двойка пока по приколу стоит, это по задумке минимальное время между атаками
+                    if pygame.time.get_ticks() - self.lastAttackTime > 2000 or self.lastAttackTime == 0:
+                        self.isInvuln = True
+                        self.lastAttackTime = pygame.time.get_ticks()
+                    #Поменять анимацию на атаку, а у меня пока ее нет
+                #0.4 также как и двойка выше, время на саму атаку
+
+
+
+
+
+
 
 
     def messageToScreen(self,msg,size, color, x, y):
