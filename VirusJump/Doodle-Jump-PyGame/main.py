@@ -95,16 +95,21 @@ class Game:
     # flag = 0 тебя убили
     def enemyDefeatScreen(self, enemyNum, flag):
         if flag:
-            print(flag, enemyNum)
+
             #вот след две строки открывают картинку(текст в виде картинки лучше оформить)
             #текстов у меня нет так шо пока открыл рандомно
             #надо бы подвязать картинку под собсна флаг и enemyNum
-            imp = pygame.image.load('spritesheet_jumper1.png')
-            self.gameDisplay.blit(imp, (0,0))
+            imp = pygame.image.load(dic_mobs[enemyNum][2]).convert()
+            self.gameDisplay.blit(imp, (0,50))
+            pygame.display.flip()
             self.waitForKeyPress()
             pygame.display.update()
         else:
-            print(flag, enemyNum)
+            imp = pygame.image.load(dic_mobs[enemyNum][2]).convert()
+            self.gameDisplay.blit(imp, (0, 50))
+            pygame.display.flip()
+            self.waitForKeyPress()
+            pygame.display.update()
 
     def updateScreen(self):
         # Обработка столкновений с платформами
