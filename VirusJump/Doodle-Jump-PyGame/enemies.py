@@ -9,6 +9,8 @@ dic_mobs = {1: [[566, 510, 122, 139], [568, 1543, 122, 135]],
                 5: [[740, 1083, 100, 125], [708, 1264, 100, 138]],
                 6: [[46, 1463, 120, 91], [32, 1560, 110, 90]],
                 7: [[419, 1541, 140, 85], [419, 1541, 140, 85]]} #словарь с координатами и ш/в мобов из spritesheet
+
+
 class Enemies(pygame.sprite.Sprite):
 
     def __init__(self,game):
@@ -17,6 +19,7 @@ class Enemies(pygame.sprite.Sprite):
         self.groups=game.enemies
         pygame.sprite.Sprite.__init__(self,self.groups)
         self.game=game
+        self.enemyNum_ = n
         self.spritesheetsobj = SpriteSheet()
         self.image_up = self.spritesheetsobj.imageLoad(dic_mobs[n][0][0], dic_mobs[n][0][1], dic_mobs[n][0][2],
                                                        dic_mobs[n][0][3])

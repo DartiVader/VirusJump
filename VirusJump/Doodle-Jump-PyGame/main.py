@@ -90,6 +90,22 @@ class Game:
         self.jump_sound.set_volume(0.1)
         self.pow_sound = pygame.mixer.Sound(path.join(self.sound_dir, 'pow.wav'))
 
+    # enemyNum - связка спрайта и текста
+    # flag = 1 ты убил
+    # flag = 0 тебя убили
+    def enemyDefeatScreen(self, enemyNum, flag):
+        if flag:
+            print(flag, enemyNum)
+            #вот след две строки открывают картинку(текст в виде картинки лучше оформить)
+            #текстов у меня нет так шо пока открыл рандомно
+            #надо бы подвязать картинку под собсна флаг и enemyNum
+            imp = pygame.image.load('spritesheet_jumper1.png')
+            self.gameDisplay.blit(imp, (0,0))
+            self.waitForKeyPress()
+            pygame.display.update()
+        else:
+            print(flag, enemyNum)
+
     def updateScreen(self):
         # Обработка столкновений с платформами
         now_time = pygame.time.get_ticks()
@@ -98,16 +114,20 @@ class Game:
             Enemies(self)
         enemies_hits = pygame.sprite.spritecollide(self.img_current, self.enemies, False, pygame.sprite.collide_mask)
         if enemies_hits:
-            if not self.isInvuln:
-                self.gameOver = True
-            else:
-                # пока меню, потом будет то что по задумке
-                for enemy in self.enemies:
-                    x, y = enemy.rect.center
-                    print(abs(x + y - self.pos.x - self.pos.y))
-                    if abs(x + y - self.pos.x - self.pos.y) < 80:
-                        enemy.kill()
-                        # вот тут вызов описания противника
+            for enemy in self.enemies:
+                x, y = enemy.rect.center
+                print(abs(x + y - self.pos.x - self.pos.y))
+                if abs(x + y - self.pos.x - self.pos.y) < 80:
+                    enemy.kill()
+                if not self.isInvuln:
+                    #enemyNum это собсна номер в словаре
+                    self.enemyDefeatScreen(enemy.enemyNum_, 0)
+                    self.gameOver = True
+                else:
+                    self.enemyDefeatScreen(enemy.enemyNum_, 1)
+                    # пока меню, потом будет то что по задумке
+
+
         # Updating the sprite's position
         self.img_current.rect.midbottom = [self.pos.x, self.pos.y]
         # Checking for collision between the player and the sprites.
@@ -207,7 +227,7 @@ class Game:
         text1 = smallfont.render('records', True, color)
         text2 = smallfont.render('settings', True, color)
         text3 = smallfont.render('quit', True, color)
-        res = (405, 720)
+        res = (display_width, display_height)
         # с разрешением надо будет еще че-то делать, если поменять разрешение самой игры, то выходит тлен
         screen = pygame.display.set_mode(res)
         height = screen.get_height()
@@ -314,6 +334,8 @@ class Game:
         pygame.display.update()
         self.waitForKeyPress()
         g.run()
+
+
 
     def gameOverScreen(self):
         self.gameDisplay.fill(orange)
